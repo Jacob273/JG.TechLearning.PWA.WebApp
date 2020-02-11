@@ -26,7 +26,7 @@ namespace JG.TechLearning.PWA.WebApp
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                options.CheckConsentNeeded = context => false;
             });
 
 
@@ -51,9 +51,6 @@ namespace JG.TechLearning.PWA.WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            app.UseCookiePolicy();
-
             app.UseRouting();
 
             app.UseAuthorization();
