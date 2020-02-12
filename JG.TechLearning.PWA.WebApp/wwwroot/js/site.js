@@ -8,10 +8,7 @@
     {
         console.log("IndexedDB exists! :)");
 
-
         var request = indexedDb.open(databaseName, databaseVersion);
-
-
         request.onerror = function (event)
         {
             console.log("Error IndexedDB cannot be used ?!");
@@ -25,7 +22,7 @@
         };
 
         request.onupgradeneeded = function (event)
-            {
+        {
             console.log("UpgradeNeeded()");
 
             var tspaDatabase = event.target.result;
