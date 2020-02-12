@@ -4,4 +4,51 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+
+    <div class="container">
+        <button onclick="GetData()"> Get Data from database </button>
+
+        <div id="customerDiv"></div>
+
+    </div>
+
+
 </div>
+
+
+
+<script>
+       function GetData()
+       {
+           var indexedDb = GetIndexedDb();
+
+            if (indexedDb)
+            {
+                 var request = indexedDb.open("TSPA.Database");
+
+                var tspaDatabase;
+                request.onsuccess = function (event) {
+                    tspaDatabase = event.target.result;
+
+                    tspaDatabase.transaction("projectInstances")
+                    .objectStore("projectInstances")
+                    .get("444-44-4444")
+                    .onsuccess = function (event) {
+                        var project = event.target.result;
+                        $('#customerDiv').text("nr proj glownego: " + project.nr_proj_gl + " <br><br> czas: " + project.hours);
+   
+                    };
+                };
+            }
+            else
+            {
+                console.log("could not get indexed db");
+            }
+        }
+
+
+function GetIndexedDb()
+{
+    return window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+}
+</script>
