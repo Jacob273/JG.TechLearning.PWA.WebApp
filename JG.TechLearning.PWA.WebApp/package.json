@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "name": "jg.techlearning.pwa",
+  "private": true,
+  "devDependencies": {
+    "gulp": "4.0.2",
+    "del": "5.1.0"
+  },
+  "dependencies": {
+    "@types/jquery": "^3.3.32"
+  }
+}

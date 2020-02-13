@@ -6,4 +6,9 @@
   <PropertyGroup>
     <ActiveDebugProfile>JG.TechLearning.PWA.WebApp</ActiveDebugProfile>
   </PropertyGroup>
+  <ItemGroup>
+    <TypeScriptCompile Update="wwwroot\scripts\TspaDatabase.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+  </ItemGroup>
 </Project>

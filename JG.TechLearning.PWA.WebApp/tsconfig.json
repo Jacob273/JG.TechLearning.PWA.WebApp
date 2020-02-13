@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "target": "es6",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./@types"
+    ]
+  },
+  "files": [
+    "./wwwroot/scripts/TspaDatabase.ts"
+  ],
+  "compileOnSave": true
+}

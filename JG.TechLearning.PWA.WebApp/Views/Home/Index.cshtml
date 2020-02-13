@@ -2,51 +2,41 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <div class="container">
-        <button onclick="GetData()"> Get Data from database </button>
-
-        <div id="customerDiv"></div>
-
+        <button onclick="GetProjectData()"> Get Data from database </button>
+        <div id="projectDataDiv"></div>
     </div>
-
-
 </div>
 
-<script>
-    function GetData()
-    {
-        var indexedDb = GetIndexedDb();
 
-        if (indexedDb)
+@section scripts
+{
+    <script>
+        $(document).ready(function ()
         {
-            var request = indexedDb.open("TSPA.Database");
+            let tspaDb = new DAL.TspaDatabase();
+            let indexDbComponent = tspaDb.GetIndexedDbComponent();
 
-            var tspaDatabase;
-            request.onsuccess = function (event)
+            if (indexDbComponent)
             {
-                tspaDatabase = event.target.result;
+                tspaDb.BuildIfNeeded(indexDbComponent);
+            }
+        });
 
-                tspaDatabase.transaction("projectInstances")
-                    .objectStore("projectInstances")
-                    .get("444-44-4444")
-                    .onsuccess = function (event)
-                    {
-                        var project = event.target.result;
-                        $('#customerDiv').text("nr proj glownego: " + project.nr_proj_gl + " <br><br> czas: " + project.hours);
-
-                    };
-            };
-        }
-        else
+        function GetProjectData()
         {
-            console.log("could not get indexed db");
-        }
-    }
+            const tspaDb = new DAL.TspaDatabase();
 
-    function GetIndexedDb()
-    {
-        return window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    }
-</script>
+            tspaDb.GetProject("999-44-4444", (proj)=>
+            {
+                $('#projectDataDiv').text("Numer polskiego projektu: " + proj.ParentProjectNumber +
+                    "Przepracowane godziny: " + proj.WorkingHours +
+                    "Data: " + proj.Date);
+            });
+        };
+    </script>
+}
