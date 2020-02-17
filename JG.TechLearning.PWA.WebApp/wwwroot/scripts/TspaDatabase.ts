@@ -7,13 +7,15 @@ namespace DAL
         ProjectNumber: String;
         WorkingDate: Date;
         WorkingHours: Number;
+        File: any;
 
-        constructor(parentProjectNumber: String, projectNumber: String, workingDate: Date, workingHours: Number)
+        constructor(parentProjectNumber: String, projectNumber: String, workingDate: Date, workingHours: Number, file: any = null)
         {
             this.ParentProjectNumber = parentProjectNumber;
             this.ProjectNumber = projectNumber;
             this.WorkingDate = workingDate;
             this.WorkingHours = workingHours;
+            this.File = file;//optional?
         }
 
         Display(): void
@@ -59,6 +61,7 @@ namespace DAL
 
                 objectStore.transaction.oncomplete = function (event: any)
                 {
+                    //creation of ProjectsStore completed
                     var ProjectsStore = tspaDatabase
                         .transaction("ProjectsStore", "readwrite")
                         .objectStore("ProjectsStore");
@@ -108,6 +111,38 @@ namespace DAL
                     onerror = function (event: any)
                     {
                         console.log("Transaction::Get error.")
+                    };
+            }
+        }
+
+        public InsertProject(newProject: Project, onGetDataCallback: any)
+        {
+            var indexedDb = this.GetIndexedDbComponent();
+
+            if (!indexedDb)
+            {
+                console.log("Cannot access indexedDb...");
+                onGetDataCallback(null);
+            }
+
+            var request = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
+
+            request.onsuccess = function (event: any)
+            {
+                var tspaDatabase = event.target.result;
+
+
+                tspaDatabase.transaction("ProjectsStore", "readwrite")
+                    .objectStore("ProjectsStore")
+                    .put(newProject)
+                    .onsuccess = function (event: any)
+                    {
+                        console.log("put suceess");
+                        onGetDataCallback(event);
+                    },
+                    onerror = function (event: any)
+                    {
+                        console.log('error storing data !!!!' + event);
                     };
             }
         }

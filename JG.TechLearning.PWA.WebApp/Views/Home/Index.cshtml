@@ -2,16 +2,30 @@
     ViewData["Title"] = "Home Page";
 }
 
-
-
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <div class="container">
-        <button onclick="GetProjectData()"> Get Data from database </button>
-        <div id="projectDataDiv"></div>
+    <div class="container" style="height: 500px;">
+        <div class="row bg-light w-100">
+            <div class="col-12 text-left">
+                <h2>READS</h2>
+            </div>
+            <div class="col text-left mt-5">
+                <button onclick="GetProjectData()"> Get Data from database </button>
+                <div id="projectDataDiv"></div>
+            </div>
+        </div>
+        <div class="row bg-light mt-3 w-100">
+            <div class="col-12 text-left">
+                <h2>INSERTS</h2>
+            </div>
+            <div class="col text-left mt-5">
+                <input type="file" id="files" name="files" multiple><br><br>
+                <button onclick="InsertProjectData()">Insert into database</button>
+                <div id="fileAddedDiv"></div>
+            </div>
+        </div>
     </div>
 </div>
-
 
 @section scripts
 {
@@ -31,12 +45,53 @@
         {
             const tspaDb = new DAL.TspaDatabase();
 
-            tspaDb.GetProject("999-44-4444", (proj)=>
+            tspaDb.GetProject("999-44-4444", (proj) =>
             {
                 $('#projectDataDiv').text("Numer polskiego projektu: " + proj.ParentProjectNumber +
-                    "Przepracowane godziny: " + proj.WorkingHours +
-                    "Data: " + proj.Date);
+                    "   Przepracowane godziny: " + proj.WorkingHours +
+                    "   Data: " + proj.WorkingDate);
             });
         };
+
+
+        var insertionCounter = 1;
+        function InsertProjectData()
+        {
+            var files = document.getElementById('files').files;
+
+            //logging all selected files
+            for (var i = 0; i < files.length; i++)
+            {
+                console.log("name: <" + files[i].name + ">  size: <" + files[i].size + ">");
+            }
+
+            //72829 * 100 = 7.2MB
+            //72829 * 1000 = 72MB
+            //72829 * 10000 = 720 MB
+            for (var j = 0; j < 100; j++)
+            {
+
+                for (var i = 0; i < files.length; i++)
+                {
+                    var reader = new FileReader();
+                    reader.readAsBinaryString(files[i]);
+
+                    reader.onload = function (e)
+                    {
+                        //inserting single
+                        let bits = e.target.result;
+                        let newProj = new DAL.Project("999-44-4444 " + insertionCounter++, "001", Date.now(), 5, bits);
+
+                        const tspaDb = new DAL.TspaDatabase();
+                        tspaDb.InsertProject(newProj, (proj) =>
+                        {
+                            console.log("ïnserted:<" + proj.target.result + ">")
+                            $('#fileAddedDiv').append("<p class='lead'>" + proj.target.result + "</p>");
+                        });
+                    };
+                }
+            }
+        }
+
     </script>
 }
