@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Source>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</Source>
+    <SmallTileSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</SmallTileSource>
+    <MediumTileSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</MediumTileSource>
+    <WideTileSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</WideTileSource>
+    <LargeTileSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</LargeTileSource>
+    <AppIconSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</AppIconSource>
+    <SplashScreenSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</SplashScreenSource>
+    <PackageLogoSource>C:\Github\TechLearning\JG.TechLearning.PWA.WebApp\JG.TechLearning.PWA.WebApp\wwwroot\images\JG-Favicon512x512.jpg</PackageLogoSource>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
+    <RemoteDebugEnabled>False</RemoteDebugEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>
