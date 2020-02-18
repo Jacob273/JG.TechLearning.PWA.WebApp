@@ -1,6 +1,6 @@
 ﻿{
-  "name": "JG.TechLearning.PWA.WebApp",
-  "short_name": "PWA",
+  "name": "PWA research app",
+  "short_name": "Pwa research",
   "description": "PWA app research in ASP.NET Core.",
   "icons": [
     {

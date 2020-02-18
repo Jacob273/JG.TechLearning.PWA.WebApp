@@ -10,7 +10,8 @@
     ]
   },
   "files": [
-    "./wwwroot/scripts/TspaDatabase.ts"
+    "./wwwroot/scripts/DAL.ts",
+    "./wwwroot/scripts/Helpers.ts"
   ],
   "compileOnSave": true
 }

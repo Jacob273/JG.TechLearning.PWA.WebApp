@@ -3,25 +3,40 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Welcome to PWA research web application</h1>
     <div class="container" style="height: 500px;">
-        <div class="row bg-light w-100">
+        <div class="row bg-light w-100 p-2">
             <div class="col-12 text-left">
-                <h2>READS</h2>
+                <h2 class="mt-1">READS</h2>
             </div>
             <div class="col text-left mt-5">
-                <button onclick="GetProjectData()"> Get Data from database </button>
+                <input class="form-control" type="text" id="projectIdInputForDataOnly" value="999-44-4444" />
+                <button class="btn-info mt-2" onclick="GetProjectData()"> Get single row from database </button>
+                <div id="projectDataDiv"></div>
+            </div>
+            <div class="col text-left mt-5">
+                <input type="text" class="form-control" id="projectIdInputForFileOnly" value="999-44-4444 1" />
+                <button class="btn-info mt-2" onclick="GetFileFromDatabase()"> Get single file from database </button>
                 <div id="projectDataDiv"></div>
             </div>
         </div>
-        <div class="row bg-light mt-3 w-100">
+        <div class="row bg-light mt-3 w-100 p-2">
             <div class="col-12 text-left">
-                <h2>INSERTS</h2>
+                <h2 class="mt-1">INSERTS</h2>
             </div>
             <div class="col text-left mt-5">
+                <input type="text" class="form-control" id="amountOfIterationsInput" value="10" />
                 <input type="file" id="files" name="files" multiple><br><br>
-                <button onclick="InsertProjectData()">Insert into database</button>
+                <button class="btn-info mt-2" onclick="InsertProjectData()">Insert into database</button>
                 <div id="fileAddedDiv"></div>
+            </div>
+        </div>
+        <div class="row bg-light mt-3 w-100 p-2" style="height: 500px;">
+            <div class="col-12 text-left">
+                <h2 class="mt-1">Pdf view</h2>
+            </div>
+            <div class="col text-left mt-5">
+                <div id="pdfHolder" class="h-100"></div>
             </div>
         </div>
     </div>
@@ -45,11 +60,33 @@
         {
             const tspaDb = new DAL.TspaDatabase();
 
-            tspaDb.GetProject("999-44-4444", (proj) =>
+            let parentProjectToSearch = $('#projectIdInputForDataOnly').val();
+
+            tspaDb.GetProject(parentProjectToSearch, (proj) =>
             {
-                $('#projectDataDiv').text("Numer polskiego projektu: " + proj.ParentProjectNumber +
-                    "   Przepracowane godziny: " + proj.WorkingHours +
-                    "   Data: " + proj.WorkingDate);
+                const dateHelper = new Helpers.DateHelper();
+
+                var projectDataDiv = $('#projectDataDiv').text(" \n \n Numer polskiego projektu: " + proj.ParentProjectNumber +
+                    " \n \n   Przepracowane godziny: " + proj.WorkingHours +
+                    " \n \n   Data: " + dateHelper.FormatDate(proj.WorkingDate));
+
+                projectDataDiv.html(projectDataDiv.html().replace(/\n/g, '<br/>'));
+            });
+        };
+
+        function GetFileFromDatabase()
+        {
+            const tspaDb = new DAL.TspaDatabase();
+
+            let parentProjectFileToSearch = $('#projectIdInputForFileOnly').val();
+
+            tspaDb.GetFile(parentProjectFileToSearch, (fileFromDb) =>
+            {
+                console.log("file is here!   " + fileFromDb);
+                var file = new Blob([fileFromDb], { type: 'application/pdf' });
+                var fileURL = URL.createObjectURL(file);
+                var viewer = $('#pdfHolder');
+                PDFObject.embed(fileURL, viewer);
             });
         };
 
@@ -65,22 +102,31 @@
                 console.log("name: <" + files[i].name + ">  size: <" + files[i].size + ">");
             }
 
+            if (!(files.length > 0))
+            {
+                $('#fileAddedDiv').append("<p class='lead'> Please choose files first!</p > ");
+                return;
+            }
+
             //72829 * 100 = 7.2MB
             //72829 * 1000 = 72MB
             //72829 * 10000 = 720 MB
-            for (var j = 0; j < 100; j++)
+
+            let amountOfIterations = $('#amountOfIterationsInput').val();
+
+            for (var j = 0; j < amountOfIterations; j++)
             {
 
                 for (var i = 0; i < files.length; i++)
                 {
                     var reader = new FileReader();
-                    reader.readAsBinaryString(files[i]);
+                    reader.readAsArrayBuffer(files[i]);//At that time, the result attribute contains the raw binary data from the file.
 
                     reader.onload = function (e)
                     {
                         //inserting single
                         let bits = e.target.result;
-                        let newProj = new DAL.Project("999-44-4444 " + insertionCounter++, "001", Date.now(), 5, bits);
+                        let newProj = new DAL.Project("999-44-4444 " + insertionCounter++, "001", new Date(Date.now()), 5, bits);
 
                         const tspaDb = new DAL.TspaDatabase();
                         tspaDb.InsertProject(newProj, (proj) =>

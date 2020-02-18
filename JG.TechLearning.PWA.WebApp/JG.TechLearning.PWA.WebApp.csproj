@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\scripts\TspaDatabase.ts" />
+    <Content Remove="wwwroot\scripts\DAL.ts" />
+    <Content Remove="wwwroot\scripts\Helpers.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Update="wwwroot\scripts\TspaDatabase.ts">
+    <TypeScriptCompile Update="wwwroot\scripts\DAL.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
