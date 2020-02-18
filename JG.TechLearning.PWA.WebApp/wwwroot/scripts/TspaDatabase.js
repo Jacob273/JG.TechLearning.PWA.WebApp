@@ -1,85 +1,134 @@
 var DAL;
-(function (DAL) {
-    class Project {
-        constructor(parentProjectNumber, projectNumber, workingDate, workingHours) {
+(function (DAL)
+{
+    class Project
+    {
+        constructor(parentProjectNumber, projectNumber, workingDate, workingHours, file = null)
+        {
             this.ParentProjectNumber = parentProjectNumber;
             this.ProjectNumber = projectNumber;
             this.WorkingDate = workingDate;
             this.WorkingHours = workingHours;
+            this.File = file;
         }
-        Display() {
+        Display()
+        {
             console.log("Polish Project Number " + this.ParentProjectNumber);
         }
     }
     DAL.Project = Project;
-    class TspaDatabase {
-        constructor() {
+    class TspaDatabase
+    {
+        constructor()
+        {
             this.DatabaseVersion = "2";
             this.DatabaseName = "TSPA.Database";
             this.ProjectsStorageName = "ProjectsStore";
         }
-        BuildIfNeeded(indexedDb) {
+        BuildIfNeeded(indexedDb)
+        {
             console.log("IndexedDB component can be used. Trying to connect to: " + this.DatabaseName + ", version " + this.DatabaseVersion);
             var connection = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
-            connection.onerror = function (event) {
+            connection.onerror = function (event)
+            {
                 console.log("Error! IndexedDB cannot be used!" + event.target.result);
             };
-            connection.onsuccess = function (event) {
+            connection.onsuccess = function (event)
+            {
                 console.log("Success! IndexedDB is ready to use!");
                 var tspaDatabase = event.target.result;
                 tspaDatabase.close();
             };
-            connection.onupgradeneeded = function (event) {
+            connection.onupgradeneeded = function (event)
+            {
                 console.log("Upgrade is required! Processing...");
                 var tspaDatabase = event.target.result;
                 var objectStore = tspaDatabase.createObjectStore("ProjectsStore", { keyPath: "ParentProjectNumber" });
                 objectStore.createIndex("WorkingDate", "WorkingDate", { unique: false });
                 objectStore.createIndex("ParentProjectNumber", "ParentProjectNumber", { unique: true });
-                objectStore.transaction.oncomplete = function (event) {
+                objectStore.transaction.oncomplete = function (event)
+                {
+                    //creation of ProjectsStore completed
                     var ProjectsStore = tspaDatabase
                         .transaction("ProjectsStore", "readwrite")
                         .objectStore("ProjectsStore");
                     let projectRep = new ProjectRepository();
-                    projectRep.Data.forEach(function (projectData) {
+                    projectRep.Data.forEach(function (projectData)
+                    {
                         console.log("Adding to database " + projectData.ParentProjectNumber);
                         ProjectsStore.add(projectData);
                     });
                 };
-                objectStore.transaction.onerror = function (event) {
+                objectStore.transaction.onerror = function (event)
+                {
                     console.log("transaction error");
                 };
             };
         }
-        GetProject(parentProjectNumberToSearch, onGetDataCallback) {
+        GetProject(parentProjectNumberToSearch, onGetDataCallback)
+        {
             console.log("Retrieving data related to project with number: " + parentProjectNumberToSearch);
             var indexedDb = this.GetIndexedDbComponent();
-            if (!indexedDb) {
+            if (!indexedDb)
+            {
                 console.log("Cannot access indexedDb...");
                 onGetDataCallback(null);
             }
             var request = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
-            request.onsuccess = function (event) {
+            request.onsuccess = function (event)
+            {
                 console.log("Connection established to: " + this.DatabaseName);
                 var tspaDatabase = event.target.result;
                 tspaDatabase.transaction("ProjectsStore")
                     .objectStore("ProjectsStore")
                     .get(parentProjectNumberToSearch)
-                    .onsuccess = function (event) {
-                    console.log(" 1 " + event.target.result);
-                    onGetDataCallback(event.target.result);
-                },
-                    onerror = function (event) {
+                    .onsuccess = function (event)
+                    {
+                        console.log(" 1 " + event.target.result);
+                        onGetDataCallback(event.target.result);
+                    },
+                    onerror = function (event)
+                    {
                         console.log("Transaction::Get error.");
                     };
             };
         }
-        GetIndexedDbComponent() {
+        InsertProject(newProject, onGetDataCallback)
+        {
+            var indexedDb = this.GetIndexedDbComponent();
+            if (!indexedDb)
+            {
+                console.log("Cannot access indexedDb...");
+                onGetDataCallback(null);
+            }
+            var request = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
+            request.onsuccess = function (event)
+            {
+                var tspaDatabase = event.target.result;
+                tspaDatabase.transaction("ProjectsStore", "readwrite")
+                    .objectStore("ProjectsStore")
+                    .put(newProject)
+                    .onsuccess = function (event)
+                    {
+                        console.log("put suceess");
+                        onGetDataCallback(event);
+                    },
+                    onerror = function (event)
+                    {
+                        console.log('error storing data !!!!' + event);
+                    };
+            };
+        }
+        GetIndexedDbComponent()
+        {
             return window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
         }
     }
     DAL.TspaDatabase = TspaDatabase;
-    class ProjectRepository {
-        constructor() {
+    class ProjectRepository
+    {
+        constructor()
+        {
             this.Data = [
                 new Project("999-44-4444", "001", new Date("2020-01-20"), 5),
                 new Project("888-44-4444", "002", new Date("2020-01-21"), 3),

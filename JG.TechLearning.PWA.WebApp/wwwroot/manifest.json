@@ -1,7 +1,7 @@
 ﻿{
   "name": "JG.TechLearning.PWA.WebApp",
   "short_name": "PWA",
-  "description": "Creating first PWA in ASP.NET Core.",
+  "description": "PWA app research in ASP.NET Core.",
   "icons": [
     {
       "src": "/images/JG-Favicon192x192.jpg",

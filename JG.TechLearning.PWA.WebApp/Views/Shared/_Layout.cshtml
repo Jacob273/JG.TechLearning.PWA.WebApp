@@ -16,7 +16,6 @@
               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="manifest" href="~/manifest.json" />
 </head>
 <body>
     <header>
@@ -32,6 +31,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact us!</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -45,7 +47,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - JG.TechLearning.PWA.WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - JG.TechLearning.PWA.WebApp
         </div>
     </footer>
 
@@ -70,6 +72,5 @@
     <script src="~/scripts/site.js" asp-append-version="true"></script>
     <script src="~/scripts/TspaDatabase.js"></script>
     @RenderSection("Scripts", required: false)
-    <script>'serviceWorker'in navigator&&navigator.serviceWorker.register('/serviceworker')</script>
 </body>
 </html>
