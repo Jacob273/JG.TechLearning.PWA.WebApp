@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace JG.TechLearning.PWA.WebApp
@@ -24,9 +26,9 @@ namespace JG.TechLearning.PWA.WebApp
                 options.CheckConsentNeeded = context => false;
             });
 
-
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddProgressiveWebApp();
         }
 
