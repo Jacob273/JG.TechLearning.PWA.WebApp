@@ -42,16 +42,6 @@
 @section scripts
 {
     <script>
-        $(document).ready(function ()
-        {
-            let tspaDb = new DAL.TspaDatabase();
-            let indexDbComponent = tspaDb.GetIndexedDbComponent();
-
-            if (indexDbComponent)
-            {
-                tspaDb.BuildIfNeeded(indexDbComponent);
-            }
-        });
 
         function GetProjectData()
         {

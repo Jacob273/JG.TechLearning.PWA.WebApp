@@ -1,5 +1,6 @@
-document.addEventListener('DOMContentLoaded', function ()
+$(document).ready(function ()
 {
+    //service worker registration
     if ('serviceWorker' in navigator)
     {
         console.log('Service Worker is supported');
@@ -18,4 +19,20 @@ document.addEventListener('DOMContentLoaded', function ()
         console.error('Service Worker Not Supported');
     }
 
-}, false);
+    //database creation (if needed)
+    Helpers.BrowserComponentGetter.GetIndexedDbComponent((indexDbComponent) =>
+    {
+        if (indexDbComponent)
+        {
+            const tspaDb = new DAL.TspaDatabase();
+            tspaDb.BuildIfNeeded(indexDbComponent);
+
+            tspaDb.GetMaxNumber((maxNum) =>
+            {
+                console.log("maxNum:::" + maxNum);
+            });
+        }
+    });
+
+    Helpers.NavigationHelper.LogDatabaseSizeToConsole();
+});

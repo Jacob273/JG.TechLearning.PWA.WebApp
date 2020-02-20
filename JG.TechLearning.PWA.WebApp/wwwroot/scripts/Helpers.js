@@ -20,5 +20,22 @@ var Helpers;
         }
     }
     Helpers.DateHelper = DateHelper;
+    class NavigationHelper {
+        static LogDatabaseSizeToConsole() {
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                navigator.storage.estimate().then(({ usage, quota }) => {
+                    console.log(`NavigationHelper:::: Using ${usage} out of ${quota} bytes.`);
+                });
+            }
+        }
+    }
+    Helpers.NavigationHelper = NavigationHelper;
+    class BrowserComponentGetter {
+        static GetIndexedDbComponent(onGetComponentCallback) {
+            var indexedDbComponent = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+            onGetComponentCallback(indexedDbComponent);
+        }
+    }
+    Helpers.BrowserComponentGetter = BrowserComponentGetter;
 })(Helpers || (Helpers = {}));
 //# sourceMappingURL=Helpers.js.map
