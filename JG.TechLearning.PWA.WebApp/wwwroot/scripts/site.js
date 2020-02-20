@@ -27,9 +27,9 @@ $(document).ready(function ()
             const tspaDb = new DAL.TspaDatabase();
             tspaDb.BuildIfNeeded(indexDbComponent);
 
-            tspaDb.GetMaxNumber((maxNum) =>
+            tspaDb.GetLastProjNumber((lastProj) =>
             {
-                console.log("maxNum:::" + maxNum);
+                console.log("Last proj:::" + lastProj);
             });
         }
     });

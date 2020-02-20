@@ -50,7 +50,6 @@ namespace DAL
 
             openRequest.onsuccess = function (event: any)
             {
-                console.log("Success! IndexedDB is ready to use!");
                 var tspaDatabase = event.target.result;
                 tspaDatabase.close();
             };
@@ -61,26 +60,23 @@ namespace DAL
 
                 var tspaDatabase = event.target.result;
 
-                var objectStore = tspaDatabase.createObjectStore(this.ProjectsStorageName, { keyPath: "ParentProjectNumber" });
+                var objectStore = tspaDatabase.createObjectStore("ProjectsStore", { keyPath: "ParentProjectNumber" });
 
                 objectStore.createIndex("WorkingDate", "WorkingDate", { unique: false });
                 objectStore.createIndex("ParentProjectNumber", "ParentProjectNumber", { unique: true });
 
                 objectStore.transaction.oncomplete = function (event: any)
                 {
-                    //creation of ProjectsStore completed
-                    var ProjectsStore = tspaDatabase
-                        .transaction(this.ProjectsStorageName, "readwrite")
-                        .objectStore(this.ProjectsStorageName);
+                    var projectStore = tspaDatabase
+                        .transaction("ProjectsStore", "readwrite")
+                        .objectStore("ProjectsStore");
 
                     const projectRep = new ProjectRepository();
                     projectRep.Data.forEach(function (projectData)
                     {
-                        console.log("Adding to database " + projectData.ParentProjectNumber);
-                        ProjectsStore.add(projectData);
+                        console.log("Inserting initial data to database " + projectData.ParentProjectNumber);
+                        projectStore.add(projectData);
                     });
-
-                    tspaDatabase.close();
                 };
 
                 objectStore.transaction.onerror = function (event: any)
@@ -95,7 +91,10 @@ namespace DAL
         {
             this.GetProject(parentProjectNumberToSearch, (proj: any) =>
             {
-                onGetDataCallback(proj.File);
+                if (proj && proj.File)
+                {
+                    onGetDataCallback(proj.File);
+                }
             });
         }
 
@@ -103,7 +102,7 @@ namespace DAL
         {
             console.log("Retrieving data related to project with number: " + parentProjectNumberToSearch);
 
-            Helpers.BrowserComponentGetter.GetIndexedDbComponent((indexedDb : any) =>
+            Helpers.BrowserComponentGetter.GetIndexedDbComponent((indexedDb: any) =>
             {
                 if (!indexedDb)
                 {
@@ -115,23 +114,19 @@ namespace DAL
 
                 openRequest.onsuccess = function (event: any)
                 {
-                    console.log("Connection established to: " + this.DatabaseName);
-
                     var tspaDatabase = event.target.result;
 
-                    tspaDatabase.transaction(this.ProjectsStorageName)
-                        .objectStore(this.ProjectsStorageName)
+                    tspaDatabase.transaction("ProjectsStore")
+                        .objectStore("ProjectsStore")
                         .get(parentProjectNumberToSearch)
                         .onsuccess = function (event: any)
                         {
-                            console.log(" 1 " + event.target.result);
                             onGetDataCallback(event.target.result);
                             tspaDatabase.close();
                         },
                         onerror = function (event: any)
                         {
                             tspaDatabase.close();
-                            console.log("Transaction::Get error.")
                         };
                 }
             });
@@ -154,12 +149,11 @@ namespace DAL
                 {
                     var tspaDatabase = event.target.result;
 
-                    tspaDatabase.transaction(this.ProjectsStorageName, "readwrite")
-                        .objectStore(this.ProjectsStorageName)
+                    tspaDatabase.transaction("ProjectsStore", "readwrite")
+                        .objectStore("ProjectsStore")
                         .put(newProject)
                         .onsuccess = function (event: any)
                         {
-                            console.log("put suceess");
                             onGetDataCallback(event);
                         },
                         onerror = function (event: any)
@@ -176,32 +170,31 @@ namespace DAL
             });
         }
 
-        public GetMaxNumber(onGetDataCallback: any)
+        public GetLastProjNumber(onGetDataCallback: any)
         {
-        //todo:
-        //    Helpers.BrowserComponentGetter.GetIndexedDbComponent((indexedDb: any) =>
-        //    {
-        //        var openReq = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
+            Helpers.BrowserComponentGetter.GetIndexedDbComponent((indexedDb: any) =>
+            {
+                var openReq = indexedDb.open(this.DatabaseName, this.DatabaseVersion);
 
-        //        openReq.onsuccess = function ()
-        //        {
-        //            var db = openReq.result;
-        //            var transaction = db.transaction(this.ProjectsStorageName, 'readonly');
-        //            var objectStore = transaction.objectStore(this.ProjectsStorageName);
-        //            var index = objectStore.index('revision');
-        //            var openCursorRequest = index.openCursor(null, 'prev');
-        //            var maxRevisionObject = null;
+                openReq.onsuccess = function ()
+                {
+                    var tspaDatabase = openReq.result;
+                    var transaction = tspaDatabase.transaction("ProjectsStore", 'readonly');
+                    var objectStore = transaction.objectStore("ProjectsStore");
+                    var index = objectStore.index('ParentProjectNumber');
+                    var openCursorRequest = index.openCursor(null, 'prev');
 
-        //            openCursorRequest.onsuccess = function (event : any)
-        //            {
-        //                if (event.target.result)
-        //                {
-        //                    onGetDataCallback(event.target.result.value); //the object with max revision
-        //                }
-        //            };
-        //        }
+                    openCursorRequest.onsuccess = function (event: any)
+                    {
+                        if (event.target.result)
+                        {
+                            var project = event.target.result.value;
+                            onGetDataCallback(project.ParentProjectNumber);
+                        }
+                    };
+                }
 
-        //    });
+            });
         }
     }
 

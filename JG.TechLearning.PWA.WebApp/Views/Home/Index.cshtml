@@ -70,7 +70,6 @@
 
             tspaDb.GetFile(parentProjectFileToSearch, (fileFromDb) =>
             {
-                console.log("file is here!   " + fileFromDb);
                 var file = new Blob([fileFromDb], { type: 'application/pdf' });
                 var fileURL = URL.createObjectURL(file);
                 var viewer = $('#pdfHolder');
@@ -95,10 +94,6 @@
                 $('#fileAddedDiv').append("<p class='lead'> Please choose files first!</p > ");
                 return;
             }
-
-            //72829 * 100 = 7.2MB
-            //72829 * 1000 = 72MB
-            //72829 * 10000 = 720 MB
 
             let amountOfIterations = $('#amountOfIterationsInput').val();
 
