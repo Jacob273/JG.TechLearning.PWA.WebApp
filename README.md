@@ -1,3 +1,3 @@
-Progressive Web Application: which in short has a manifest file and also a service-worker.js which is doing some work when the application goes offline.
+This project was mainly created for testing indexedDB possibilities.
 
 Stack:  c#, css, html, typescript/js & asp.net core, indexedDb.
